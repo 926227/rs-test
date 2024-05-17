@@ -1,29 +1,56 @@
-import React, {useState} from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import './App.css';
-import {Header} from './components/header/Header';
-import {Footer} from './components/footer/Footer';
-import {Button} from './components/generics/button/Button';
-import {PrimaryButton} from './components/primary-button/PrimaryButton';
+import {ButtonGroup} from './components/button-group/ButtonGroup';
+import {PokemonCard} from './components/pokemon-card/PokemonCard';
+import {Box} from './components/Box/Box';
+
+let counter = 0;
 
 function App() {
-  const [count2, setCount] = useState<number>(0);
+  const [id, setId] = useState(1);
+  const [pokemon, setPokemon] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const increment = () => {
-    const inc = (current: number) => current + 1;
-    setCount(inc);
-  };
+  console.log('render', ++counter);
 
-  const decrement = () => {
-    setCount((current) => current - 1);
+  useEffect(() => {
+    const handleFetchPokemon = async () => {
+      // setPokemon(null);
+      setIsLoading(true);
+
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+      const json = await res.json();
+      setPokemon(json);
+      setIsLoading(false);
+    };
+
+    handleFetchPokemon();
+  }, [id]);
+
+  const onClick = () => {
+    const handleFetchPokemon = async () => {
+      // setPokemon(null);
+      setIsLoading(true);
+
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/13`);
+      const json = await res.json();
+      setPokemon(json);
+      setIsLoading(false);
+    };
+
+    handleFetchPokemon();
   };
 
   return (
     <div className="App">
-      <Header name="Vasya" />
-      <Button onKick={decrement}>decrement</Button>
-      <PrimaryButton className='' onKick={increment}>increment</PrimaryButton>
-      <Footer count={count2} />
+      <Box>
+        <PokemonCard
+          isLoading={isLoading}
+          data={pokemon}
+        />
+        <ButtonGroup handleSetId={setId} />
+        <button onClick={onClick}>FETCH N 13</button>
+      </Box>
     </div>
   );
 }
